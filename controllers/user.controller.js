@@ -2,12 +2,11 @@ import { User } from "../models/users.model.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// Register a new user
+
 export const register = async (req, res) => {
     try {
         const { fullName, email, phoneNumber, password, role } = req.body;
 
-        // Validate fields
         if (!fullName || !email || !password || !phoneNumber || !role) {
             return res.status(400).json({
                 message: "All fields are required",
@@ -15,7 +14,6 @@ export const register = async (req, res) => {
             });
         }
 
-        // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({
@@ -24,7 +22,6 @@ export const register = async (req, res) => {
             });
         }
 
-        // Hash password and create new user
         const hashPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({
             fullName,
@@ -49,20 +46,15 @@ export const register = async (req, res) => {
     }
 };
 
-// Login user
 export const login = async (req, res) => {
     try {
         const { email, password, role } = req.body;
-
-        // Validate fields
         if (!email || !password || !role) {
             return res.status(400).json({
                 message: "Required fields are missing",
                 success: false,
             });
         }
-
-        // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({
